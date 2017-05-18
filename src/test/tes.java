@@ -1,6 +1,9 @@
 package test;
 
+import java.text.SimpleDateFormat;
 import java.util.Random;
+import java.util.Date;
+
 
 /**
  * Created by HeShulin on 2017/5/17.
@@ -18,11 +21,9 @@ public class tes {
         }
         return random;
     }
-    public static void main(String arg0[])
-    {
-        tes t=new tes();
-
-        System.out.println(t.getRandom());
+    public static void main(String arg0[]) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.print(df.format(new Date()));
     }
 
 
