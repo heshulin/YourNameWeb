@@ -7,6 +7,14 @@ import java.security.NoSuchAlgorithmException;
  * Created by HeShulin on 2017/5/17.
  */
 public class MD5 {
+    static MD5 md5=new MD5();
+    private MD5() {
+    }
+
+    public static MD5 getMd5() {
+        return md5;
+    }
+
     public static String getMd5(String plainText) {
         StringBuffer buf = null;
         try {
