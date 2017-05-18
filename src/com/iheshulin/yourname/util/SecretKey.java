@@ -15,6 +15,7 @@ public class SecretKey {
             int temp=(int)((Math.random()*10000)%52);
             random=random + src.charAt(temp);
         }
+
         return random;
     }
     public static String getSecretKey(int[] random) {
