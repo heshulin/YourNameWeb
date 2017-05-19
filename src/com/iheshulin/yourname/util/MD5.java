@@ -16,6 +16,7 @@ public class MD5 {
     }
 
     public static String getMd5(String plainText) {
+
         StringBuffer buf = null;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
