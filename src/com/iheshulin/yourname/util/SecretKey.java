@@ -1,13 +1,14 @@
 package com.iheshulin.yourname.util;
 
 import java.util.Random;
+import com.iheshulin.yourname.util.MD5;
 
 /**
  * Created by HeShulin on 2017/5/17.
  */
 public class SecretKey {
     public String getRandom() {
-
+        MD5 md5=MD5.getMd5();
         String src="ZXCVBNMASDFGHJKLQWERTYUIOPzxcvbnmasdfghjklpouiytrewq";
         String random="";
         for(int i=0;i<10;i++)
@@ -15,8 +16,8 @@ public class SecretKey {
             int temp=(int)((Math.random()*10000)%52);
             random=random + src.charAt(temp);
         }
-
-        return random;
+        String finnalrandom=md5.getMd5(random);
+        return finnalrandom;
     }
     public static String getSecretKey(int[] random) {
         return "asd";
