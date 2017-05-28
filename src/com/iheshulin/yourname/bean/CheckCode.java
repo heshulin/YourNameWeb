@@ -15,7 +15,7 @@ public class CheckCode {
     private int id;
 
     @Column
-    private int userid;
+    private String userphone;
 
     @Column
     private String checkcode;
@@ -32,12 +32,12 @@ public class CheckCode {
         this.id = id;
     }
 
-    public int getUserid() {
-        return userid;
+    public String getUserphone() {
+        return userphone;
     }
 
-    public void setUserid(int userid) {
-        this.userid = userid;
+    public void setUserphone(String userphone) {
+        this.userphone = userphone;
     }
 
     public String getCheckcode() {

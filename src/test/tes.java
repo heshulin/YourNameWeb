@@ -3,9 +3,9 @@ package test;
 import com.iheshulin.yourname.util.Message;
 
 import java.io.IOException;
+import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Random;
-import java.util.Date;
+import java.util.*;
 
 
 /**
@@ -24,11 +24,15 @@ public class tes {
         }
         return random;
     }
+
+
+//        ArrayList a1 = new ArrayList();
+//        a1.add("1");
+//        a1.add("2");
+//        a1.add("3");
+//        System.out.println(a1.get(a1.size()-1));
     public static void main(String arg0[]) throws IOException {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.print(df.format(new Date()));
-        Message message=new Message();
-        message.sendMessage("18548186741");
+
     }
 
 
