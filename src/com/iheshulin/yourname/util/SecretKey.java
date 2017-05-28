@@ -7,7 +7,7 @@ import com.iheshulin.yourname.util.MD5;
  * Created by HeShulin on 2017/5/17.
  */
 public class SecretKey {
-    public String getRandom() {
+    public String getSecretKey() {
         MD5 md5=MD5.getMd5();
         String src="ZXCVBNMASDFGHJKLQWERTYUIOPzxcvbnmasdfghjklpouiytrewq";
         String random="";
@@ -19,7 +19,5 @@ public class SecretKey {
         String finnalrandom=md5.getMd5(random);
         return finnalrandom;
     }
-    public static String getSecretKey(int[] random) {
-        return "asd";
-    }
+
 }
