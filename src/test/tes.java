@@ -1,13 +1,11 @@
 package test;
 
-import com.iheshulin.Filter.YournameFilter;
-import com.iheshulin.yourname.util.UploadFile;
+import com.iheshulin.yourname.util.Message;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Random;
 import java.util.Date;
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
 
 
 /**
@@ -26,10 +24,11 @@ public class tes {
         }
         return random;
     }
-    public static void main(String arg0[]) throws Exception {
-        UploadFile uf = new UploadFile("yourname-headphotos");
-        uf.uploadHeadPhoto("C:\\Users\\LC\\Desktop\\timg.jpg");
-
+    public static void main(String arg0[]) throws IOException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.print(df.format(new Date()));
+        Message message=new Message();
+        message.sendMessage("18548186741");
     }
 
 
