@@ -13,6 +13,10 @@ import com.qiniu.http.Response;
  * Created by LC on 2017/5/26.
  */
 public class UploadFile {
+
+    /**ljn*
+     * 参数配置
+     */
     private String accessKey = "gFO-8IYwjVPzNAmbAORHJCgGwIHzcyIbFhZ3yVIi";
     private String secretKey = "hllClWcBETkcn0aI8SROEe4Y1blV5gEQwgUHAQQu";
     private String upToken;
@@ -28,6 +32,10 @@ public class UploadFile {
         this.uploadManager = new UploadManager(cfg);
 
     }
+
+    /**ljn*
+     * 上传图片接口（内部使用）
+     */
     public String uploadPhoto(String bucket, String localFilePath){
         try {
             this.upToken = auth.uploadToken(bucket);
@@ -50,10 +58,21 @@ public class UploadFile {
             return null;
         }
     }
+
+    /**ljn*
+     * 上传头像接口
+     * 接收参数：localFilePath  本地图片地址
+     * 返回参数：成功返回图片url，失败返回null
+     */
     public String uploadHeadPhoto(String localFilePath) throws Exception{
         String bucket = "yourname-headphotos";
         return uploadPhoto(bucket, localFilePath);
     }
+    /**ljn*
+     * 上传手账图片接口
+     * 接收参数：localFilePath  本地图片地址
+     * 返回参数：成功返回图片url，失败返回null
+     */
     public String uploadDairyPhoto(String localFilePath) throws Exception{
         String bucket = "yourname-dairyphotos";
         return uploadPhoto(bucket, localFilePath);
