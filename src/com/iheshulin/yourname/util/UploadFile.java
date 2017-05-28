@@ -24,7 +24,7 @@ public class UploadFile {
     private com.qiniu.storage.Configuration cfg;
     private UploadManager uploadManager;
     private String locaFilePath;
-    public UploadFile(String bucket) throws Exception{
+    public UploadFile() throws Exception{
         //构造一个带指定Zone对象的配置类
         this.cfg = new com.qiniu.storage.Configuration(Zone.zone1());
         this.auth = Auth.create(this.accessKey, this.secretKey);
@@ -73,7 +73,7 @@ public class UploadFile {
      * 接收参数：localFilePath  本地图片地址
      * 返回参数：成功返回图片url，失败返回null
      */
-    public String uploadDairyPhoto(String localFilePath) throws Exception{
+    public String uploadDiaryPhoto(String localFilePath) throws Exception{
         String bucket = "yourname-dairyphotos";
         return uploadPhoto(bucket, localFilePath);
     }

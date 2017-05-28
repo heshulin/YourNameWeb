@@ -27,25 +27,31 @@ public class LoginController {
 
     @Inject
     Dao dao;
-    @AdaptBy(type=JsonAdaptor.class)
+    //@AdaptBy(type=JsonAdaptor.class)
     @Ok("json")
     @Fail("http:500")
     @At("login")
     @POST
-    public Object login(@Param("username")String username, @Param("password")String password, HttpServletRequest request){
+    public Object login(@Param("username")String userName, @Param("password")String password){
         try{
-            password = MD5.getMd5(password);
             NutMap re = new NutMap();
-            if(dao.query(User.class, Cnd.where("username","=",username).and("password","=",password)).size()>0){
-                re.put("statues",1);
-                re.put("msg","OK");
+            if(userName!=null&&password!=null) {
+                password = md5.getMd5(password);
+                boolean res = dao.query(User.class, Cnd.where("username", "=", userName).and("password", "=", password)).isEmpty();
+                if (!res) {
+                    re.put("statues", 1);
+                    re.put("msg", "OK");
+                } else {
+                    re.put("statues", 0);
+                    re.put("msg", "账号或密码错误");
+                }
             }else{
-                re.put("statues",0);
-                re.put("msg","账号或密码错误");
+                re.put("statues", 0);
+                re.put("msg", "账号或密码错误");
             }
             return re;
         }catch (Exception e){
-            log.info("error in login");
+            log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in login");
