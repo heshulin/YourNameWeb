@@ -46,14 +46,10 @@ public class LoginController {
                 } else {
                     re.put("statues", 0);
                     re.put("msg", "账号或密码错误");
-                    re.put("secretkey", "");
-                    re.put("userid", null);
                 }
             }else{
                 re.put("statues", 0);
                 re.put("msg", "账号或密码错误");
-                re.put("secretkey", "");
-                re.put("userid", null);
             }
             return re;
         }catch (Exception e){
@@ -61,8 +57,6 @@ public class LoginController {
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in login");
-            re.put("secretkey", "");
-            re.put("userid", null);
             return re;
         }
 

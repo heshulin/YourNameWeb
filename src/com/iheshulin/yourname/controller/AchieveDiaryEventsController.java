@@ -5,7 +5,6 @@ import com.iheshulin.yourname.bean.User;
 import com.iheshulin.yourname.util.GetDatetime;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.dao.entity.Record;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
@@ -29,12 +28,9 @@ public class AchieveDiaryEventsController {
     @Ok("json")
     @Fail("http:500")
     @At("do_achieve_diary_events")
-    @POST
+    @GET
     public Object doAchieveDiaryEvents(@Param("userid")Integer userId, @Param("secretkey")String secretKey){
         try{
-            /*
-            * 未完成
-            * */
             NutMap re = new NutMap();
             boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {

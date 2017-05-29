@@ -43,7 +43,24 @@ public class GetDatetime {
     public static Date stringToDate(String datetime){
         try
         {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = sdf.parse(datetime);
+            return date;
+        }
+        catch (ParseException e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**ljn*
+     format格式的字符串转Date
+     */
+    public static Date stringToDate(String datetime, String format){
+        try
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
             Date date = sdf.parse(datetime);
             return date;
         }

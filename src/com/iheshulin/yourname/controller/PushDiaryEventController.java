@@ -85,17 +85,14 @@ public class PushDiaryEventController {
                     } else {
                         re.put("statues", 0);
                         re.put("msg", "上传失败");
-                        re.put("url", "");
                     }
                 } else {
                     re.put("statues", 0);
                     re.put("msg", "上传失败");
-                    re.put("url", "");
                 }
             }else{
                 re.put("statues", 0);
                 re.put("msg", "请登录");
-                re.put("url", "");
             }
             return re;
         }catch (Exception e){
@@ -103,7 +100,6 @@ public class PushDiaryEventController {
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in do_upload_dairy_photo");
-            re.put("url", "");
             return re;
         }
     }
