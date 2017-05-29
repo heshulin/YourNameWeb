@@ -3,7 +3,6 @@ package com.iheshulin.yourname.controller;
  * Created by LC on 2017/5/28.
  */
 import com.iheshulin.yourname.bean.User;
-import com.iheshulin.yourname.util.MD5;
 import com.iheshulin.yourname.bean.Diary;
 import com.iheshulin.yourname.util.UploadFile;
 import org.nutz.dao.Cnd;
@@ -17,10 +16,11 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 import java.io.File;
 import java.util.Date;
+import org.nutz.ioc.loader.annotation.IocBean;
 
+@IocBean
 public class PushDiaryEventController {
     private Log log = Logs.get();
-    private MD5 md5=MD5.getMd5();
     private UploadFile uploadFile;
     @Inject
     Dao dao;
@@ -33,7 +33,7 @@ public class PushDiaryEventController {
                                    @Param("location")String location, @Param("fileurl")String fileUrl){
         try{
             NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("userid", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {
                 if (content != null && contentTime != null && location != null && fileUrl != null) {
                     Diary diary = new Diary();
@@ -51,6 +51,7 @@ public class PushDiaryEventController {
                 re.put("msg", "请登录");
             }
         }catch (Exception e){
+            log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in do_upload_dairy_photo");
@@ -98,6 +99,7 @@ public class PushDiaryEventController {
             }
             return re;
         }catch (Exception e){
+            log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in do_upload_dairy_photo");

@@ -11,7 +11,7 @@ public class GetDatetime {
         获取当前服务器时间
         yyyy-MM-dd HH:mm:ss格式
      */
-    public String getNowString(){
+    public static String getNowString(){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(new Date());
     }
@@ -19,21 +19,28 @@ public class GetDatetime {
      获取当前服务器时间
      Date类型
      */
-    public Date GetNow(){
+    public static Date GetNow(){
         return new Date();
     }
     /**ljn*
      Date类型时间转yyyy-MM-dd HH:mm:ss格式的字符串
      */
-    public String dateToString(Date datetime){
+    public static String dateToString(Date datetime){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(datetime);
+    }
+    /**ljn*
+     Date类型时间转format格式的字符串
+     */
+    public static String dateToString(Date datetime, String format){
+        SimpleDateFormat df = new SimpleDateFormat(format);
         return df.format(datetime);
     }
 
     /**ljn*
      yyyy-MM-dd HH:mm:ss格式的字符串转Date
      */
-    public Date stringToDate(String datetime){
+    public static Date stringToDate(String datetime){
         try
         {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");

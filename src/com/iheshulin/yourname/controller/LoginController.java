@@ -2,18 +2,16 @@ package com.iheshulin.yourname.controller;
 
 import com.iheshulin.yourname.bean.User;
 import com.iheshulin.yourname.util.MD5;
+import com.iheshulin.yourname.util.SecretKey;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.adaptor.JsonAdaptor;
 import org.nutz.mvc.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by LC on 2017/5/17.
@@ -27,27 +25,35 @@ public class LoginController {
 
     @Inject
     Dao dao;
-    //@AdaptBy(type=JsonAdaptor.class)
     @Ok("json")
     @Fail("http:500")
     @At("login")
     @POST
-    public Object login(@Param("username")String userName, @Param("password")String password){
+    public Object doLogin(@Param("userphone")String userPhone, @Param("password")String password){
         try{
             NutMap re = new NutMap();
-            if(userName!=null&&password!=null) {
+            if(userPhone!=null&&password!=null) {
                 password = md5.getMd5(password);
-                boolean res = dao.query(User.class, Cnd.where("username", "=", userName).and("password", "=", password)).isEmpty();
-                if (!res) {
+                User u = dao.fetch(User.class, Cnd.where("userphone", "=", userPhone).and("password", "=", password));
+                if (u!=null) {
+                    String secretKey = SecretKey.getSecretKey();
+                    u.setSecretkey(secretKey);
+                    dao.update(u);
                     re.put("statues", 1);
                     re.put("msg", "OK");
+                    re.put("secretkey", secretKey);
+                    re.put("userid", u.getId());
                 } else {
                     re.put("statues", 0);
                     re.put("msg", "账号或密码错误");
+                    re.put("secretkey", "");
+                    re.put("userid", null);
                 }
             }else{
                 re.put("statues", 0);
                 re.put("msg", "账号或密码错误");
+                re.put("secretkey", "");
+                re.put("userid", null);
             }
             return re;
         }catch (Exception e){
@@ -55,6 +61,8 @@ public class LoginController {
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error in login");
+            re.put("secretkey", "");
+            re.put("userid", null);
             return re;
         }
 
