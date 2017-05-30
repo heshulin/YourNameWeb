@@ -17,6 +17,14 @@ public class GetDatetime {
     }
     /**ljn*
      获取当前服务器时间
+     format格式
+     */
+    public static String getNowString(String format){
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.format(new Date());
+    }
+    /**ljn*
+     获取当前服务器时间
      Date类型
      */
     public static Date GetNow(){
