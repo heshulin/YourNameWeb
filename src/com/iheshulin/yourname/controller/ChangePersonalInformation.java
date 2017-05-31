@@ -38,7 +38,7 @@ public class ChangePersonalInformation {
     @At("ChangePersonalInformation")
     @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
     @POST
-    public Object ChangePersonalInformation(@Param("userid")String userid, @Param("username")String username, @Param("age")String age, @Param("sex")String sex, @Param("userphoto")TempFile userphoto, @Param("secretkey")String secretkey, HttpServletRequest request) {
+    public Object ChangePersonalInformation(@Param("userid")int userid, @Param("username")String username, @Param("age")String age, @Param("sex")String sex, @Param("userphoto")TempFile userphoto, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
             //用户名
             if (username != null) {
