@@ -13,6 +13,9 @@ import java.net.URLEncoder;
  * Created by HeShulin on 2017/5/31.
  */
 public class GetPhoto {
+    //photoname 需要爬取什么样的图片
+    //downloadpath 下载到本地哪个文件夹格式类似 “c://image//”
+    //tempname 下载到本地的图片叫什么名字
     public String getWebPhoto(String photoname,String downloadpath,String tempname) throws Exception {
         //爬虫获取相关图片
         Crawler crawler = new Crawler();
