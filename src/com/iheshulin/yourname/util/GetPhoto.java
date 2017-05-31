@@ -13,18 +13,23 @@ import java.net.URLEncoder;
  * Created by HeShulin on 2017/5/31.
  */
 public class GetPhoto {
-    public String getWebPhoto(String photoname) throws Exception {
+    public String getWebPhoto(String photoname,String downloadpath,String tempname) throws Exception {
+        //爬虫获取相关图片
         Crawler crawler = new Crawler();
         crawler.pullPhoto(photoname);
         String oldphotourl = crawler.getPhotourl();
-        download(oldphotourl, "test.jpg","c:\\image\\");
+        //下载图片到本地
+        download(oldphotourl, tempname,downloadpath);
+        //利用滤镜接口处理图片并下载到本地
         YournameFilter yournameFilter = new YournameFilter();
         try {
-            yournameFilter.pullPhoto("c:\\image\\test.jpg");
+            yournameFilter.pullPhoto(downloadpath+"\\"+tempname);
+            download(yournameFilter.getPhotoUrl(), "tempname.jpg",downloadpath);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return yournameFilter.getPhotoUrl();
+        //返回图片在本地的路径
+        return downloadpath+"\\"+tempname;
     }
     public static void download(String urlString, String filename,String savePath) throws Exception {
         // 构造URL
