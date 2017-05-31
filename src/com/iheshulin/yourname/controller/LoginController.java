@@ -42,7 +42,7 @@ public class LoginController {
                     re.put("statues", 1);
                     re.put("msg", "OK");
                     re.put("secretkey", secretKey);
-                    re.put("userid", u.getId());
+                    re.put("id", u.getId());
                 } else {
                     re.put("statues", 0);
                     re.put("msg", "账号或密码错误");

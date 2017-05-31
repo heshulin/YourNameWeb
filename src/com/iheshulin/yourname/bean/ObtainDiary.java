@@ -26,6 +26,17 @@ public class ObtainDiary {
     @Column
     private double completion;
 
+    public Date getObtaintime() {
+        return obtaintime;
+    }
+
+    public void setObtaintime(Date obtaintime) {
+        this.obtaintime = obtaintime;
+    }
+
+    @Column
+    private Date obtaintime;
+
     public int getId() {
         return id;
     }

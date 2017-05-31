@@ -21,6 +21,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +30,9 @@ import java.util.*;
 
 @IocBean
 public class PushOthersDiaryController{
+    public String sThreeDaysAgo;
+    public Integer randUserId = null;
+    public Double complishDgree = 0.00;
     /*
     private class MDiary{
         private String content;
@@ -52,14 +56,14 @@ public class PushOthersDiaryController{
         //获取chosenDay天之前的日期
         Date now = GetDatetime.GetNow();
         Date threeDaysAgo = new Date(now.getTime() - chosenDay * 24 * 60 * 60 * 1000);
-        String sThreeDaysAgo = GetDatetime.dateToString(threeDaysAgo,"yyyy-MM-dd");
-        Date dThreeDaysAgo = GetDatetime.stringToDate(sThreeDaysAgo,"yyyy-MM-dd");
+        this.sThreeDaysAgo = GetDatetime.dateToString(threeDaysAgo,"yyyy-MM-dd");
+        Date dThreeDaysAgo = GetDatetime.stringToDate(this.sThreeDaysAgo,"yyyy-MM-dd");
         Date nextDay = new Date(dThreeDaysAgo.getTime() + 1 * 24 * 60 * 60 * 1000);
 
         //自定义sql
         String sqlCommand = "select distinct(userid) userId from diary where date_format(contenttime,'%Y-%m-%d')=@sThreeDaysAgo";
         Sql sql = Sqls.fetchRecord(sqlCommand);
-        sql.params().set("sThreeDaysAgo",sThreeDaysAgo);
+        sql.params().set("sThreeDaysAgo",this.sThreeDaysAgo);
         sql.setCallback(new SqlCallback() {
             @Override
             public Object invoke(Connection connection, ResultSet resultSet, Sql sql) throws SQLException {
@@ -74,14 +78,14 @@ public class PushOthersDiaryController{
         dao.execute(sql);
         List<Integer> list = sql.getList(Integer.class);
         System.out.println(list);
-        Integer randUserId = null;
+
         if(list.size()==0)
             return null;
         if(list.size()==1){
-            randUserId = list.get(0);
+            this.randUserId = list.get(0);
         }else {
              Integer randUserIdIndex = rand.nextInt(list.size());
-             randUserId = list.get(randUserIdIndex);
+             this.randUserId = list.get(randUserIdIndex);
         }
 //        System.out.println(randUserId);
 //        System.out.println(sThreeDaysAgo);
@@ -94,31 +98,35 @@ public class PushOthersDiaryController{
         System.out.println(simpleDateFormat.format(nextDay));
         List<Diary> dataList= dao.query(Diary.class,Cnd.where("date_format(contenttime,'%Y-%m-%d')","=",sThreeDaysAgo).and("userid","<=",randUserId));
 
-        //List<Diary> dataList= dao.query(Diary.class,Cnd.where("contenttime",">=",dThreeDaysAgo).and("userid","<=",randUserId).and("contenttime","<",nextDay));
+        //List<Diary> dataList= dao.query(Diary.class,Cnd.where("contenttime",">=",dThreeDaysAgo).and("userid","<=",this.randUserId).and("contenttime","<",nextDay));
         NutMap res = new NutMap();
-        res.put("randUserId",randUserId);
-        res.put("choisenDay",sThreeDaysAgo);
+        res.put("randUserId",this.randUserId);
+        res.put("choisenDay",this.sThreeDaysAgo);
         res.put("datalist",dataList);
         return res;
     }
 
-    private List<Double> matchingAnalysis(List<Diary> taskDiaryEventsList, List<Diary> myDiaryEventsList){
+    private List<Double> matchingAnalysis(List<Diary> taskDiaryEventsList, List<Diary> myDiaryEventsList) throws Exception{
 
         /*
         对两个diary的list进行事件内容和图片相似度分析，返回每一条event的完成情况,当完成度大于60%认定完成event。
          */
+        Double comlished = 0.00;
         List<Double> resultList = new ArrayList<Double>();
         for(int i=0;i<taskDiaryEventsList.size();i++)
             resultList.add(0.00);
         for(int i=0;i<myDiaryEventsList.size();i++){
             for(int j=0;j<taskDiaryEventsList.size();j++){
-                Double temp = MatchingAnalysisTool.similarityDegree(myDiaryEventsList.get(i).getContent(),taskDiaryEventsList.get(j).getContent());
+                MatchingAnalysisTool matchingAnalysisTool = new MatchingAnalysisTool(myDiaryEventsList.get(i).getContent(),taskDiaryEventsList.get(j).getContent());
+                Double temp = matchingAnalysisTool.similarityDegree();
                 if(temp>MIN_SIMILARITY_DIGREE){
+                    comlished++;
                     resultList.set(j,temp);
                     break;
                 }
             }
         }
+        complishDgree = comlished/(double)taskDiaryEventsList.size();
         return resultList;
     }
 
@@ -173,6 +181,7 @@ public class PushOthersDiaryController{
                 obtainDiary.setCompletion(0);
                 obtainDiary.setOtheruserid(randUserId);
                 obtainDiary.setDiarytime(GetDatetime.stringToDate(choisenDay,"yyyy-MM-dd"));
+                obtainDiary.setObtaintime(GetDatetime.GetNow());
                 dao.insert(obtainDiary);
                 re.put("statues", 1);
                 re.put("msg", "OK");
@@ -194,7 +203,7 @@ public class PushOthersDiaryController{
     @Ok("json")
     @Fail("http:500")
     @At("others_diary/do_display_others_diary")
-    @POST
+    @GET
     public Object doDisplayOthersDiary(@Param("userid")Integer userId, @Param("secretkey")String secretKey,
                                        @Param("randuserid") Integer randUserId, @Param("choisenday") String choisenDay){
         try {
@@ -211,7 +220,9 @@ public class PushOthersDiaryController{
 
                 re.put("statues", 1);
                 re.put("msg", "OK");
-                re.put("compareResultList", compareResult);
+                re.put("compareresultlist", compareResult);
+                re.put("taskdiary",taskDiaryEventsList);
+                re.put("completiondegree",complishDgree);
                 return re;
             } else {
                 re.put("statues", 0);

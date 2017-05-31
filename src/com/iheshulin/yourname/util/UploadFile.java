@@ -36,7 +36,7 @@ public class UploadFile {
     /**ljn*
      * 上传图片接口（内部使用）
      */
-    public String uploadPhoto(String bucket, String localFilePath){
+    private String uploadPhoto(String bucket, String localFilePath){
         try {
             this.upToken = auth.uploadToken(bucket);
             this.locaFilePath = localFilePath;
@@ -46,7 +46,11 @@ public class UploadFile {
         System.out.println(putRet.key);
         System.out.println(putRet.hash);
         */
-            return "http://oqjsvz8l8.bkt.clouddn.com/" + putRet.key;
+            if(bucket.equals("yourname-headphotos")) {
+                return "http://oqjsvz8l8.bkt.clouddn.com/" + putRet.key;
+            }else{
+                return "http://oqjsq4e3e.bkt.clouddn.com/" + putRet.key;
+            }
         }catch (QiniuException ex){
             Response r = ex.response;
             System.err.println(r.toString());

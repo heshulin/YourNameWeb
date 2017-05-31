@@ -27,7 +27,7 @@ public class GetDatetime {
      获取当前服务器时间
      Date类型
      */
-    public static Date GetNow(){
+    public static Date getNow(){
         return new Date();
     }
     /**ljn*
