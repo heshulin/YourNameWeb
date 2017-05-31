@@ -13,11 +13,13 @@ import java.io.IOException;
  */
 public class Message {
 
+    //短信验证码
     private MD5 md5=MD5.getMd5();
     private String username="yanyongjie";
     private String password=md5.getMd5("15296603340yyjqq");
     private GetCheckCode getCheckCode=new GetCheckCode();
     private final OkHttpClient client = new OkHttpClient();
+    //phonenum需要发送短信的电话号
     public String sendMessage(String phonenum) throws IOException {
         int len=6;
         String checkcode=getCheckCode.getCheckCode(len);

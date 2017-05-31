@@ -58,7 +58,6 @@ public class UploadFile {
             return null;
         }
     }
-
     /**ljn*
      * 上传头像接口
      * 接收参数：localFilePath  本地图片地址

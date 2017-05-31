@@ -8,6 +8,7 @@ import com.iheshulin.yourname.util.MD5;
  */
 public class SecretKey {
     public static String getSecretKey() {
+        //获取secretkey
         MD5 md5=MD5.getMd5();
         String src="ZXCVBNMASDFGHJKLQWERTYUIOPzxcvbnmasdfghjklpouiytrewq";
         String random="";
