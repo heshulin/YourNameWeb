@@ -1,5 +1,7 @@
 package test;
 
+
+import com.iheshulin.baiduimage.Crawler;
 import com.iheshulin.yourname.util.Message;
 
 import java.io.IOException;
@@ -32,7 +34,9 @@ public class tes {
 //        a1.add("3");
 //        System.out.println(a1.get(a1.size()-1));
     public static void main(String arg0[]) throws IOException {
-
+        Crawler crawler=new Crawler();
+        crawler.pullPhoto("内蒙古大学");
+        System.out.println(crawler.getPhotourl());
     }
 
 

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="baidu_image">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/baidu_image.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
