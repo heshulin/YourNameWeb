@@ -54,7 +54,7 @@ public class PushOthersDiaryController{
         Integer chosenDay = rand.nextInt(3)+1;
 
         //获取chosenDay天之前的日期
-        Date now = GetDatetime.GetNow();
+        Date now = GetDatetime.getNow();
         Date threeDaysAgo = new Date(now.getTime() - chosenDay * 24 * 60 * 60 * 1000);
         this.sThreeDaysAgo = GetDatetime.dateToString(threeDaysAgo,"yyyy-MM-dd");
         Date dThreeDaysAgo = GetDatetime.stringToDate(this.sThreeDaysAgo,"yyyy-MM-dd");
@@ -181,7 +181,7 @@ public class PushOthersDiaryController{
                 obtainDiary.setCompletion(0);
                 obtainDiary.setOtheruserid(randUserId);
                 obtainDiary.setDiarytime(GetDatetime.stringToDate(choisenDay,"yyyy-MM-dd"));
-                obtainDiary.setObtaintime(GetDatetime.GetNow());
+                obtainDiary.setObtaintime(GetDatetime.getNow());
                 dao.insert(obtainDiary);
                 re.put("statues", 1);
                 re.put("msg", "OK");

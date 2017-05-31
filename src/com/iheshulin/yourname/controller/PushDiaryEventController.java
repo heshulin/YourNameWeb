@@ -3,9 +3,7 @@ package com.iheshulin.yourname.controller;
  * Created by LC on 2017/5/28.
  */
 import com.iheshulin.Filter.YournameFilter;
-import com.iheshulin.yourname.bean.ObtainDiary;
-import com.iheshulin.yourname.bean.User;
-import com.iheshulin.yourname.bean.Diary;
+import com.iheshulin.yourname.bean.*;
 import com.iheshulin.yourname.util.*;
 import okhttp3.Connection;
 import org.apache.jasper.tagplugins.jstl.core.Url;
@@ -107,6 +105,14 @@ public class PushDiaryEventController {
                         Double complishDegree = this.getComplishDegree(userId, secretKey, obtainDiaryList.getOtheruserid(), obtainDiaryList.getDiarytime());
                         obtainDiaryList.setCompletion(complishDegree);
                         dao.update(obtainDiaryList);
+                        BottleSetting bottleSetting = new BottleSetting();
+                        bottleSetting.setPostuserid(userId);
+                        bottleSetting.setReceiveuserid(obtainDiaryList.getOtheruserid());
+                        bottleSetting.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
+                        BottleSetting bottleSetting1 = new BottleSetting();
+                        bottleSetting1.setPostuserid(obtainDiaryList.getOtheruserid());
+                        bottleSetting1.setReceiveuserid(userId);
+                        bottleSetting1.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
                         re.put("currentcomplishdegree", complishDegree);
                     }
                 }
