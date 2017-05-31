@@ -9,6 +9,8 @@ import java.util.Date;
 /**
  * Created by HeShulin on 2017/5/17.
  */
+
+@Table("bootlesetting")
 public class BottleSetting {
     @Id
     private int id;
