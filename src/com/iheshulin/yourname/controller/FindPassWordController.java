@@ -90,7 +90,7 @@ public class FindPassWordController {
                 if(today.before(temptime)) {
                     User user1 = dao.fetch(User.class, Cnd.where("userphone", "=",userphone));
                     user1.setPassword(password);
-                    dao.update(user);
+                    dao.update(user1);
                     re.put("statues", 1);
                     re.put("msg", "OK");
                     return re;

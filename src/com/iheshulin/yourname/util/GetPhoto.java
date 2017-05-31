@@ -6,6 +6,8 @@ import com.iheshulin.baiduimage.Crawler;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * Created by HeShulin on 2017/5/31.
