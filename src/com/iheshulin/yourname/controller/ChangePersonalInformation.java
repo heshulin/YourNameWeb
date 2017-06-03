@@ -8,6 +8,7 @@ import com.iheshulin.yourname.util.UploadFile;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by HeShulin on 2017/5/31.
  */
-
+@IocBean
 public class ChangePersonalInformation {
     private Log log = Logs.get();
     private MD5 md5=MD5.getMd5();
@@ -42,25 +43,25 @@ public class ChangePersonalInformation {
         try {
             //用户名
             if (username != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("userid","=",userid));
+                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
                 user1.setUsername(username);
                 dao.update(user1);
             }
             //年龄
             if (age != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("userid","=",userid));
+                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
                 user1.setAge(age);
                 dao.update(user1);
             }
             //性别
             if (sex != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("userid","=",userid));
+                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
                 user1.setSex(sex);
                 dao.update(user1);
             }
             //用户头像
             if (userphoto != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("userid","=",userid));
+                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
                 UploadFile uploadFile=new UploadFile();
                 uploadFile.uploadHeadPhoto(userphoto.getFile().getPath());
                 dao.update(user1);

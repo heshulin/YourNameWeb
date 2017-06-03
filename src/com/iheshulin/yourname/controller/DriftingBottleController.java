@@ -9,6 +9,7 @@ import com.iheshulin.yourname.util.UploadFile;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Created by HeShulin on 2017/5/31.
  */
+@IocBean
 public class DriftingBottleController {
     private Log log = Logs.get();
     private MD5 md5=MD5.getMd5();
@@ -42,7 +44,7 @@ public class DriftingBottleController {
     public Object pushDriftingBottle(@Param("userid")int postuserid,@Param("receiveuserid")int receiveuserid,@Param("bottlecontent")String bottlecontent, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
             NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("userid", "=", postuserid).and("secretkey", "=", secretkey)).isEmpty();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", postuserid).and("secretkey", "=", secretkey)).isEmpty();
             //获取当前时间
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date today = new Date();
@@ -95,7 +97,7 @@ public class DriftingBottleController {
     public Object getDriftingBottle(@Param("userid")int postuserid,@Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
             NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("userid", "=", postuserid).and("secretkey", "=", secretkey)).isEmpty();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", postuserid).and("secretkey", "=", secretkey)).isEmpty();
             if(!res) {
 
                 //未完成

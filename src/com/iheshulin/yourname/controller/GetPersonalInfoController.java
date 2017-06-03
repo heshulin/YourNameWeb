@@ -7,6 +7,7 @@ import com.iheshulin.yourname.util.UploadFile;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -20,6 +21,7 @@ import java.io.File;
 /**
  * Created by HeShulin on 2017/6/3.
  */
+@IocBean
 public class GetPersonalInfoController {
     private Log log = Logs.get();
     private MD5 md5=MD5.getMd5();
@@ -30,15 +32,14 @@ public class GetPersonalInfoController {
     //获得个人信息
     @Ok("json")
     @Fail("http:500")
-    @At("ChangePersonalInformation")
-    @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
-    @POST
+    @At("getmyinfo")
+    @GET
     public Object ChangePersonalInformation(@Param("userid")int userid, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
             NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("userid", "=", userid).and("secretkey", "=", secretkey)).isEmpty();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userid).and("secretkey", "=", secretkey)).isEmpty();
             if(!res) {
-                User u = dao.fetch(User.class, Cnd.where("userid", "=", userid).and("secretkey", "=", secretkey));
+                User u = dao.fetch(User.class, Cnd.where("id", "=", userid).and("secretkey", "=", secretkey));
                 re.put("statues", 1);
                 re.put("msg", "ok");
                 re.put("username", u.getUsername());

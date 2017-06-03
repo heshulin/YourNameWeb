@@ -40,18 +40,19 @@ public class PushOthersDiaryController{
 
     } */
     private Log log = Logs.get();
+    private final Integer RAND_RANGE = 3;
     private final Double MIN_SIMILARITY_DIGREE = 0.60;//最小相似度设定
     /*
     *获取最近三天，随机某个用户的一篇手账
     */
     @Inject
     Dao dao;
-    private NutMap getRandUserIdInThreeDays() throws Exception{
+    private List<Diary> getRandUserIdInThreeDays() throws Exception{
         /*
-        *生成1-3内的随机数，选取三天内的某一天，因为三天时间内大环境变化不会很大，所以选取三天
+        *生成1-RAND_RANGE内的随机数，选取三天内的某一天，因为三天时间内大环境变化不会很大，所以选取三天
          */
         Random rand = new Random();
-        Integer chosenDay = rand.nextInt(3)+1;
+        Integer chosenDay = rand.nextInt(this.RAND_RANGE)+1;
 
         //获取chosenDay天之前的日期
         Date now = GetDatetime.getNow();
@@ -77,7 +78,7 @@ public class PushOthersDiaryController{
         });
         dao.execute(sql);
         List<Integer> list = sql.getList(Integer.class);
-        System.out.println(list);
+        //System.out.println(list);
 
         if(list.size()==0)
             return null;
@@ -99,29 +100,31 @@ public class PushOthersDiaryController{
         List<Diary> dataList= dao.query(Diary.class,Cnd.where("date_format(contenttime,'%Y-%m-%d')","=",sThreeDaysAgo).and("userid","<=",randUserId));
 
         //List<Diary> dataList= dao.query(Diary.class,Cnd.where("contenttime",">=",dThreeDaysAgo).and("userid","<=",this.randUserId).and("contenttime","<",nextDay));
+        /*
         NutMap res = new NutMap();
-        res.put("randUserId",this.randUserId);
-        res.put("choisenDay",this.sThreeDaysAgo);
+        res.put("randuserid",this.randUserId);
+        res.put("choisenday",this.sThreeDaysAgo);
         res.put("datalist",dataList);
-        return res;
+        */
+        return dataList;
     }
 
-    private List<Double> matchingAnalysis(List<Diary> taskDiaryEventsList, List<Diary> myDiaryEventsList) throws Exception{
+    private List<Integer> matchingAnalysis(List<Diary> taskDiaryEventsList, List<Diary> myDiaryEventsList) throws Exception{
 
         /*
         对两个diary的list进行事件内容和图片相似度分析，返回每一条event的完成情况,当完成度大于60%认定完成event。
          */
         Double comlished = 0.00;
-        List<Double> resultList = new ArrayList<Double>();
+        List<Integer> resultList = new ArrayList<Integer>();
         for(int i=0;i<taskDiaryEventsList.size();i++)
-            resultList.add(0.00);
+            resultList.add(0);
         for(int i=0;i<myDiaryEventsList.size();i++){
             for(int j=0;j<taskDiaryEventsList.size();j++){
                 MatchingAnalysisTool matchingAnalysisTool = new MatchingAnalysisTool(myDiaryEventsList.get(i).getContent(),taskDiaryEventsList.get(j).getContent());
                 Double temp = matchingAnalysisTool.similarityDegree();
                 if(temp>MIN_SIMILARITY_DIGREE){
                     comlished++;
-                    resultList.set(j,temp);
+                    resultList.set(j,1);
                     break;
                 }
             }
@@ -140,17 +143,37 @@ public class PushOthersDiaryController{
             NutMap re = new NutMap();
             boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {
-                //System.out.println();
-                NutMap result = this.getRandUserIdInThreeDays();
-                if(result!=null) {
+                //判断有没有未完成手账
+                ObtainDiary res2 = dao.fetch(ObtainDiary.class, Cnd.where("userid", "=", userId).and("obtaintime", ">=", new Date(GetDatetime.getNow().getTime() - 24*60*60*1000 )));
+                if(res2==null) {
+                    //判断有没有近期手账
+                    boolean res1 = dao.query(Diary.class, Cnd.where("contenttime", ">=", new Date(GetDatetime.getNow().getTime() - this.RAND_RANGE * 24 * 60 * 60 * 1000))).isEmpty();
+                    if (!res1) {
+                        //System.out.println();
+                        List<Diary> result = this.getRandUserIdInThreeDays();
+                        while (result == null) {
+                            result = this.getRandUserIdInThreeDays();
+                        }
+                        re.put("statues", 1);
+                        re.put("msg", "OK");
+                        re.put("flag", 0);
+                        re.put("datalist", result);
+                        re.put("choisenday", this.sThreeDaysAgo);
+                        re.put("randuserid",this.randUserId);
+                        return re;
+                    } else {
+                        re.put("statues", 0);
+                        re.put("msg", "未找到推送内容");
+                        re.put("flag", 0);
+                        return re;
+                    }
+                }else{
                     re.put("statues", 1);
                     re.put("msg", "OK");
-                    re.put("data", result);
-                    return re;
-                }else{
-                    re.put("statues", 0);
-                    re.put("msg", "未找到推送内容");
-                    return re;
+
+                    NutMap nutMap = doDisplayOthersDiary(userId,secretKey,res2.getOtheruserid(),GetDatetime.dateToString(res2.getDiarytime(),"yyyy-MM-dd"));
+
+                    return nutMap;
                 }
             }else{
                 re.put("statues", 0);
@@ -199,36 +222,30 @@ public class PushOthersDiaryController{
             return re;
         }
     }
-
+/*
     @Ok("json")
     @Fail("http:500")
     @At("others_diary/do_display_others_diary")
     @GET
-    public Object doDisplayOthersDiary(@Param("userid")Integer userId, @Param("secretkey")String secretKey,
-                                       @Param("randuserid") Integer randUserId, @Param("choisenday") String choisenDay){
+*/
+    public NutMap doDisplayOthersDiary(Integer userId, String secretKey, Integer randUserId, String choisenDay){
         try {
-            NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
-            if (!res) {
+                NutMap re = new NutMap();
                 //获得任务diary和本人diary，进行相似度分析
                 List<Diary> taskDiaryEventsList = dao.query(Diary.class, Cnd.where("userid","=",randUserId)
                         .and("date_format(contenttime,'%Y-%m-%d')","=",choisenDay));
                 List<Diary> myDiaryEventsList = dao.query(Diary.class, Cnd.where("userid","=",userId)
                         .and("date_format(contenttime,'%Y-%m-%d')","=",GetDatetime.getNowString("yyyy-MM-dd")));
                 //相似度分析
-                List<Double> compareResult = this.matchingAnalysis(taskDiaryEventsList,myDiaryEventsList);
+                List<Integer> compareResult = this.matchingAnalysis(taskDiaryEventsList,myDiaryEventsList);
 
                 re.put("statues", 1);
                 re.put("msg", "OK");
                 re.put("compareresultlist", compareResult);
-                re.put("taskdiary",taskDiaryEventsList);
+                re.put("datalist",taskDiaryEventsList);
                 re.put("completiondegree",complishDgree);
+                re.put("flag", 1);
                 return re;
-            } else {
-                re.put("statues", 0);
-                re.put("msg", "请登录");
-                return re;
-            }
         }catch (Exception e){
             log.info(e);
             NutMap re = new NutMap();

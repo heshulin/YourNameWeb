@@ -73,6 +73,7 @@ public class PushDiaryEventController {
             boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {
                 if (content != null && location != null) {
+                    System.out.println(fileUrl);
                     if(fileUrl==null){
                         GetPhoto getPhoto = new GetPhoto();
 //                        System.out.println(location);
@@ -142,7 +143,7 @@ public class PushDiaryEventController {
                                      ){
         try{
             NutMap re = new NutMap();
-            boolean res = dao.query(User.class, Cnd.where("userid", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {
                 if (userId != null && secretKey != null && tempFile != null) {
                     File f = tempFile.getFile();
@@ -150,12 +151,17 @@ public class PushDiaryEventController {
                     YournameFilter yournameFilter = new YournameFilter();
                     yournameFilter.pullPhoto(filePath);
                     filePath = yournameFilter.getPhotoUrl();
+                    String savaPath = "c:\\image\\";
+                    String fileName = SecretKey.getSecretKey() + ".png";
+                    GetPhoto.download(filePath, fileName, savaPath);
+                    filePath = savaPath + fileName;
                     this.uploadFile = new UploadFile();
                     String fileUrl = uploadFile.uploadDiaryPhoto(filePath);
                     if (fileUrl != null) {
                         re.put("statues", 1);
                         re.put("msg", "上传成功");
                         re.put("fileurl", fileUrl);
+                        System.out.println(fileUrl);
                     } else {
                         re.put("statues", 0);
                         re.put("msg", "上传失败");
