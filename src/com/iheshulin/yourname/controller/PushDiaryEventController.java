@@ -38,9 +38,9 @@ public class PushDiaryEventController {
     Dao dao;
 
 
-    private Double getComplishDegree(Integer userId, String secretKey, Integer randUserId, Date choisenDay) throws Exception{
+    private Double getComplishDegree(Integer userId, String secretKey, Integer randUserId, Date dChoisenDay) throws Exception{
         Double complished = 0.00;
-
+        String choisenDay = GetDatetime.dateToString(dChoisenDay,"yyyy-MM-dd");
         List<Diary> taskDiaryEventsList = dao.query(Diary.class, Cnd.where("userid","=",randUserId)
                 .and("date_format(contenttime,'%Y-%m-%d')","=",choisenDay));
         List<Diary> myDiaryEventsList = dao.query(Diary.class, Cnd.where("userid","=",userId)
@@ -114,6 +114,8 @@ public class PushDiaryEventController {
                         bottleSetting1.setPostuserid(obtainDiaryList.getOtheruserid());
                         bottleSetting1.setReceiveuserid(userId);
                         bottleSetting1.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
+                        dao.insert(bottleSetting);
+                        dao.insert(bottleSetting1);
                         re.put("currentcomplishdegree", complishDegree);
                     }
                 }

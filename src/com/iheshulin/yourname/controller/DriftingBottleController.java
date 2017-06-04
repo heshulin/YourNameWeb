@@ -4,6 +4,7 @@ import com.iheshulin.yourname.bean.BottleSetting;
 import com.iheshulin.yourname.bean.CheckCode;
 import com.iheshulin.yourname.bean.DriftingBottle;
 import com.iheshulin.yourname.bean.User;
+import com.iheshulin.yourname.util.GetDatetime;
 import com.iheshulin.yourname.util.MD5;
 import com.iheshulin.yourname.util.UploadFile;
 import org.nutz.dao.Cnd;
@@ -20,6 +21,7 @@ import org.nutz.mvc.upload.UploadAdaptor;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,7 +41,6 @@ public class DriftingBottleController {
     @Ok("json")
     @Fail("http:500")
     @At("pushdriftingbottle")
-    @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
     @POST
     public Object pushDriftingBottle(@Param("userid")int postuserid,@Param("receiveuserid")int receiveuserid,@Param("bottlecontent")String bottlecontent, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
@@ -59,7 +60,7 @@ public class DriftingBottleController {
                         driftingBottle1.setPostuserid(postuserid);
                         driftingBottle1.setReceiveuserid(receiveuserid);
                         driftingBottle1.setBottlecontent(bottlecontent);
-                        dao.update(driftingBottle1);
+                        dao.insert(driftingBottle1);
                         re.put("statues", 1);
                         re.put("msg", "OK");
                     }
@@ -81,6 +82,7 @@ public class DriftingBottleController {
             }
             return re;
         } catch (Exception e) {
+            log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error finding password");
@@ -88,6 +90,63 @@ public class DriftingBottleController {
         }
 
     }
+
+
+    @Ok("json")
+    @Fail("http:500")
+    @At("get_contact_list")
+    @GET
+    public Object getContactList(@Param("userid")int userId,@Param("secretkey")String secretKey, HttpServletRequest request){
+        try{
+            NutMap re = new NutMap();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
+            if(!res) {
+                /*
+                String sqlCommond = "select distinct id, username, userphoto from User where id in (" +
+                        "select receiveuserid from botaindiary where post userid = );
+                */
+                System.out.println(userId);
+                System.out.println(secretKey);
+                List<BottleSetting> bottleSettingList = dao.query(BottleSetting.class, Cnd.where("postuserid", "=", userId).and("endtime",">=", GetDatetime.getNow()));
+                List<User> userList = new LinkedList<User>();
+                System.out.println(bottleSettingList);
+                if(bottleSettingList.size()>0){
+                    for (BottleSetting bottleSetting: bottleSettingList) {
+                        User user = dao.fetch(User.class, Cnd.where("id","=", bottleSetting.getReceiveuserid()));
+                        log.info(user.getId());
+                        user.setSecretkey(null);
+                        user.setAge(null);
+                        user.setPassword(null);
+                        user.setSex(null);
+                        userList.add(user);
+                    }
+                    re.put("statues",1);
+                    re.put("msg","OK");
+                }
+                else{
+                    re.put("msg","当前没有可以联系的人");
+                    re.put("statues", 0);
+
+                }
+
+
+                re.put("data",userList);
+
+            }else{
+                re.put("statues", 0);
+                re.put("msg", "请登录");
+            }
+            return re;
+            } catch (Exception e){
+            log.info(e);
+            NutMap re = new NutMap();
+            re.put("statues", 0);
+            re.put("msg", "get_contact_list");
+            return re;
+        }
+    }
+
+
 
     //得到漂流瓶信息
     @Ok("json")
@@ -117,6 +176,4 @@ public class DriftingBottleController {
         }
 
     }
-
-
 }

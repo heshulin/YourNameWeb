@@ -25,11 +25,12 @@ public class AchieveDiaryEventsController {
 
     @Inject
     Dao dao;
+
     @Ok("json")
     @Fail("http:500")
-    @At("do_achieve_diary_events")
+    @At("achieve_diary_events/do_achieve_history_diary_events")
     @GET
-    public Object doAchieveDiaryEvents(@Param("userid")Integer userId, @Param("secretkey")String secretKey){
+    public Object doAchieveHistoryDiaryEvents(@Param("userid")Integer userId, @Param("secretkey")String secretKey){
         try{
             NutMap re = new NutMap();
             boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
@@ -68,7 +69,44 @@ public class AchieveDiaryEventsController {
             log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
-            re.put("msg", "error in do_achieve_diary_events");
+            re.put("msg", "error in do_achieve_history_diary_events");
+            return re;
+        }
+    }
+
+
+    @Ok("json")
+    @Fail("http:500")
+    @At("achieve_diary_events/do_achieve_today_diary_events")
+    @GET
+    public Object doAchieveTodayDiaryEvents(@Param("userid")Integer userId, @Param("secretkey")String secretKey){
+        try {
+            NutMap re = new NutMap();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
+            if (!res) {
+                NutMap data = new NutMap();
+                List<Diary> diaryList = (dao.query(Diary.class, Cnd.where("userid","=",userId).and("date_format(contenttime,'%Y-%m-%d')", "=", GetDatetime.getNowString("yyyy-MM-dd")).desc("contenttime")));
+                if(diaryList.size()>0){
+                    re.put("statues", 1);
+                    re.put("msg", "OK");
+                    re.put("datalist",diaryList);
+                    return re;
+                }else{
+                    re.put("statues", 0);
+                    re.put("msg", "今天没有记录");
+                    return re;
+                }
+
+            } else {
+                re.put("statues", 0);
+                re.put("msg", "请登录");
+                return re;
+            }
+        }catch (Exception e){
+            log.info(e);
+            NutMap re = new NutMap();
+            re.put("statues", 0);
+            re.put("msg", "error in do_achieve_today_diary_events");
             return re;
         }
     }
