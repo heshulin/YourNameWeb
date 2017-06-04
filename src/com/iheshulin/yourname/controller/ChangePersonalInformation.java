@@ -39,44 +39,76 @@ public class ChangePersonalInformation {
     @At("ChangePersonalInformation")
     @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
     @POST
-    public Object ChangePersonalInformation(@Param("userid")int userid, @Param("username")String username, @Param("age")String age, @Param("sex")String sex, @Param("userphoto")TempFile userphoto, @Param("secretkey")String secretkey, HttpServletRequest request) {
+    public Object ChangePersonalInformation(@Param("userid")int userid, @Param("username")String username, @Param("age")String age, @Param("sex")String sex, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {
-            //用户名
-            if (username != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
-                user1.setUsername(username);
-                dao.update(user1);
-            }
-            //年龄
-            if (age != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
-                user1.setAge(age);
-                dao.update(user1);
-            }
-            //性别
-            if (sex != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
-                user1.setSex(sex);
-                dao.update(user1);
-            }
-            //用户头像
-            if (userphoto != null) {
-                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=",secretkey).and("id","=",userid));
-                UploadFile uploadFile=new UploadFile();
-                uploadFile.uploadHeadPhoto(userphoto.getFile().getPath());
-                dao.update(user1);
-            }
             NutMap re = new NutMap();
-            re.put("statues", 1);
-            re.put("msg", "OK");
-            return re;
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userid).and("secretkey", "=", secretkey)).isEmpty();
+            if(!res) {
+                //用户名
+                if (username != null) {
+                    User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=", secretkey).and("id", "=", userid));
+                    user1.setUsername(username);
+                    dao.update(user1);
+                }
+                //年龄
+                if (age != null) {
+                    User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=", secretkey).and("id", "=", userid));
+                    user1.setAge(age);
+                    dao.update(user1);
+                }
+                //性别
+                if (sex != null) {
+                    User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=", secretkey).and("id", "=", userid));
+                    user1.setSex(sex);
+                    dao.update(user1);
+                }
+                re.put("statues", 1);
+                re.put("msg", "OK");
+                return re;
+            }else{
+                re.put("statues", 0);
+                re.put("msg", "请登录");
+                return re;
+            }
         } catch (Exception e) {
             NutMap re = new NutMap();
             re.put("statues", 0);
-            re.put("msg", "error finding password");
+            re.put("msg", "error in ChangePersonalInformation");
             return re;
         }
 
+    }
+
+    @Ok("json")
+    @Fail("http:500")
+    @At("do_change_head_photo")
+    @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
+    @POST
+    public Object doChangeHeadPhoto(@Param("userid")int userid, @Param("userphoto")TempFile userphoto, @Param("secretkey")String secretkey) {
+        try {
+            NutMap re = new NutMap();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userid).and("secretkey", "=", secretkey)).isEmpty();
+            if (!res) {
+                //用户头像
+                User user1 = dao.fetch(User.class, Cnd.where("secretkey", "=", secretkey).and("id", "=", userid));
+                UploadFile uploadFile = new UploadFile();
+                String fileUrl = uploadFile.uploadHeadPhoto(userphoto.getFile().getPath());
+                user1.setUserphoto(fileUrl);
+                dao.update(user1);
+                re.put("statues", 1);
+                re.put("msg", "OK");
+                return re;
+            } else {
+                re.put("statues", 0);
+                re.put("msg", "请登录");
+                return re;
+            }
+        }catch (Exception e){
+            NutMap re = new NutMap();
+            re.put("statues", 0);
+            re.put("msg", "error in do_change_head_photo");
+            return re;
+        }
     }
 
 }

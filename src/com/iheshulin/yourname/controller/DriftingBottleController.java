@@ -85,7 +85,7 @@ public class DriftingBottleController {
             log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
-            re.put("msg", "error finding password");
+            re.put("msg", "error in pushdriftingbottle");
             return re;
         }
 
@@ -169,6 +169,7 @@ public class DriftingBottleController {
             }
             return re;
         } catch (Exception e) {
+            log.info(e);
             NutMap re = new NutMap();
             re.put("statues", 0);
             re.put("msg", "error finding password");
