@@ -37,7 +37,6 @@ public class ChangePersonalInformation {
     @Ok("json")
     @Fail("http:500")
     @At("ChangePersonalInformation")
-    @AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp" })
     @POST
     public Object ChangePersonalInformation(@Param("userid")int userid, @Param("username")String username, @Param("age")String age, @Param("sex")String sex, @Param("secretkey")String secretkey, HttpServletRequest request) {
         try {

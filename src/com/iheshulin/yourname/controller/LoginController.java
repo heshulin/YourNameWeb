@@ -43,6 +43,8 @@ public class LoginController {
                     re.put("msg", "OK");
                     re.put("secretkey", secretKey);
                     re.put("id", u.getId());
+                    re.put("username", u.getUsername());
+                    re.put("userphoto", u.getUserphoto());
                 } else {
                     re.put("statues", 0);
                     re.put("msg", "账号或密码错误");

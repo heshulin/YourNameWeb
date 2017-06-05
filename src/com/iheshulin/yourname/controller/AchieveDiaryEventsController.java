@@ -35,7 +35,7 @@ public class AchieveDiaryEventsController {
             NutMap re = new NutMap();
             boolean res = dao.query(User.class, Cnd.where("id", "=", userId).and("secretkey", "=", secretKey)).isEmpty();
             if(!res) {
-                NutMap data = new NutMap();
+                List<List> data = new ArrayList<List>();
                 List<Diary> list = (dao.query(Diary.class, Cnd.where("userid","=",userId).desc("contenttime")));
                 for (int i=0;i<list.size();i++) {
                     String preDate=GetDatetime.dateToString(list.get(i).getContenttime(),"yyyy-MM-dd");
@@ -49,7 +49,7 @@ public class AchieveDiaryEventsController {
                             tempList.add(list.get(i));
                     }
                     //System.out.println(tempList);
-                    data.put(preDate,tempList);
+                    data.add(tempList);
                     //System.out.println(data);
                     if(i>=list.size()-1)
                         break;
@@ -57,7 +57,7 @@ public class AchieveDiaryEventsController {
                 }
                 re.put("statues", 1);
                 re.put("msg", "OK");
-                re.put("data", data);
+                re.put("datalist", data);
                 return re;
 
             }else{

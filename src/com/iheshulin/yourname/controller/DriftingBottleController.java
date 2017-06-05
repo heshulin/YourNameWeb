@@ -60,6 +60,7 @@ public class DriftingBottleController {
                         driftingBottle1.setPostuserid(postuserid);
                         driftingBottle1.setReceiveuserid(receiveuserid);
                         driftingBottle1.setBottlecontent(bottlecontent);
+                        driftingBottle1.setTime(GetDatetime.getNowString());
                         dao.insert(driftingBottle1);
                         re.put("statues", 1);
                         re.put("msg", "OK");
@@ -147,6 +148,42 @@ public class DriftingBottleController {
     }
 
 
+    @Ok("json")
+    @Fail("http:500")
+    @At("achieve_received_bottles")
+    @GET
+    public Object achieveReceivedBottles(@Param("userid")int userid,@Param("secretkey")String secretkey, @Param("flag") Integer flag){
+        try {
+            NutMap re = new NutMap();
+            boolean res = dao.query(User.class, Cnd.where("id", "=", userid).and("secretkey", "=", secretkey)).isEmpty();
+            if (!res) {
+                List<DriftingBottle> driftingBottles = null;
+                if(flag==0) {
+                    driftingBottles = dao.query(DriftingBottle.class, Cnd.where("receiveuserid", "=", userid));
+                }else{
+                    driftingBottles = dao.query(DriftingBottle.class, Cnd.where("postuserid", "=", userid));
+                }
+                if(driftingBottles.size()>0) {
+                    re.put("datalist", driftingBottles);
+                    re.put("statues", 1);
+                    re.put("msg", "OK");
+                }else {
+                    re.put("statues", 0);
+                    re.put("msg", "没有记录");
+                }
+            } else {
+                re.put("statues", 0);
+                re.put("msg", "请登录");
+            }
+            return re;
+        } catch (Exception e) {
+        log.info(e);
+        NutMap re = new NutMap();
+        re.put("statues", 0);
+        re.put("msg", "error achieve_received_bottles");
+        return re;
+    }
+    }
 
     //得到漂流瓶信息
     @Ok("json")

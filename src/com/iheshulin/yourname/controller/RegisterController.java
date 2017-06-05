@@ -90,6 +90,8 @@ public class RegisterController {
                 if(today.before(temptime)) {
                     user.setPassword(password);
                     user.setUserphone(userphone);
+                    user.setUsername("小趣友"+ "#" + userphone);
+                    user.setUserphoto("http://oqjsq4e3e.bkt.clouddn.com/FiiMuZsK5NFfEAssgnDvTBLcNZOZ");
                     dao.insert(user);
                     re.put("statues", 1);
                     re.put("msg", "OK");
