@@ -106,16 +106,18 @@ public class PushDiaryEventController {
                         Double complishDegree = this.getComplishDegree(userId, secretKey, obtainDiaryList.getOtheruserid(), obtainDiaryList.getDiarytime());
                         obtainDiaryList.setCompletion(complishDegree);
                         dao.update(obtainDiaryList);
-                        BottleSetting bottleSetting = new BottleSetting();
-                        bottleSetting.setPostuserid(userId);
-                        bottleSetting.setReceiveuserid(obtainDiaryList.getOtheruserid());
-                        bottleSetting.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
-                        BottleSetting bottleSetting1 = new BottleSetting();
-                        bottleSetting1.setPostuserid(obtainDiaryList.getOtheruserid());
-                        bottleSetting1.setReceiveuserid(userId);
-                        bottleSetting1.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
-                        dao.insert(bottleSetting);
-                        dao.insert(bottleSetting1);
+                        if(complishDegree>=1) {
+                            BottleSetting bottleSetting = new BottleSetting();
+                            bottleSetting.setPostuserid(userId);
+                            bottleSetting.setReceiveuserid(obtainDiaryList.getOtheruserid());
+                            bottleSetting.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
+                            BottleSetting bottleSetting1 = new BottleSetting();
+                            bottleSetting1.setPostuserid(obtainDiaryList.getOtheruserid());
+                            bottleSetting1.setReceiveuserid(userId);
+                            bottleSetting1.setEndtime(new Date(GetDatetime.getNow().getTime() + 1 * 24 * 60 * 60 * 1000));
+                            dao.insert(bottleSetting);
+                            dao.insert(bottleSetting1);
+                        }
                         re.put("currentcomplishdegree", complishDegree);
                     }
                 }

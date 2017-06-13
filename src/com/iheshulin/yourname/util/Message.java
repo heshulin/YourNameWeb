@@ -28,12 +28,24 @@ public class Message {
         url = url + "&p=" + password;
         url = url + "&m=";
         url = url + phonenum;
-        url = url + "&c=" + content;
+        url = url + "&c=" + encodeUrlString(content,"UTF-8");
         Request request = new Request.Builder()
                 .url(url)
                 .build();
         Response response = client.newCall(request).execute();
         System.out.println(request);
         return checkcode;
+    }
+    public static String encodeUrlString(String str, String charset) {
+        String strret = null;
+        if (str == null)
+            return str;
+        try {
+            strret = java.net.URLEncoder.encode(str, charset);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return strret;
     }
 }

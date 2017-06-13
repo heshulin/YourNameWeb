@@ -47,7 +47,7 @@ public class PushOthersDiaryController{
     */
     @Inject
     Dao dao;
-    private List<Diary> getRandUserIdInThreeDays() throws Exception{
+    private List<Diary> getRandUserIdInThreeDays(Integer userId) throws Exception{
         /*
         *生成1-RAND_RANGE内的随机数，选取三天内的某一天，因为三天时间内大环境变化不会很大，所以选取三天
          */
@@ -62,9 +62,10 @@ public class PushOthersDiaryController{
         Date nextDay = new Date(dThreeDaysAgo.getTime() + 1 * 24 * 60 * 60 * 1000);
 
         //自定义sql
-        String sqlCommand = "select distinct(userid) userId from diary where date_format(contenttime,'%Y-%m-%d')=@sThreeDaysAgo";
+        String sqlCommand = "select distinct(userid) userId from diary where userid != @userId and date_format(contenttime,'%Y-%m-%d')=@sThreeDaysAgo";
         Sql sql = Sqls.fetchRecord(sqlCommand);
         sql.params().set("sThreeDaysAgo",this.sThreeDaysAgo);
+        sql.params().set("userId", userId);
         sql.setCallback(new SqlCallback() {
             @Override
             public Object invoke(Connection connection, ResultSet resultSet, Sql sql) throws SQLException {
@@ -147,12 +148,12 @@ public class PushOthersDiaryController{
                 ObtainDiary res2 = dao.fetch(ObtainDiary.class, Cnd.where("userid", "=", userId).and("obtaintime", ">=", new Date(GetDatetime.getNow().getTime() - 24*60*60*1000 )));
                 if(res2==null) {
                     //判断有没有近期手账
-                    boolean res1 = dao.query(Diary.class, Cnd.where("contenttime", ">=", new Date(GetDatetime.getNow().getTime() - this.RAND_RANGE * 24 * 60 * 60 * 1000))).isEmpty();
+                    boolean res1 = dao.query(Diary.class, Cnd.where("userid","!=", userId).and("contenttime", ">=", new Date(GetDatetime.getNow().getTime() - this.RAND_RANGE * 24 * 60 * 60 * 1000)).and("contenttime", "<=", new Date(GetDatetime.getNow().getTime() - 24 * 60 * 60 * 1000))).isEmpty();
                     if (!res1) {
                         //System.out.println();
-                        List<Diary> result = this.getRandUserIdInThreeDays();
+                        List<Diary> result = this.getRandUserIdInThreeDays(userId);
                         while (result == null) {
-                            result = this.getRandUserIdInThreeDays();
+                            result = this.getRandUserIdInThreeDays(userId);
                         }
                         re.put("statues", 1);
                         re.put("msg", "OK");

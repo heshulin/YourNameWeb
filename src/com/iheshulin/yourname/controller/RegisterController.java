@@ -50,6 +50,7 @@ public class RegisterController {
         try{
             NutMap re = new NutMap();
             Message message=new Message();
+            System.out.println(userphone);
             String messagetext=message.sendMessage(userphone);
             CheckCode checkCode=new CheckCode();
             checkCode.setUserphone(userphone);
@@ -62,7 +63,7 @@ public class RegisterController {
         }catch (Exception e){
             NutMap re = new NutMap();
             re.put("statues", 0);
-            re.put("msg", "error in register");
+            re.put("msg", "error in register1");
             return re;
         }
 
@@ -77,7 +78,7 @@ public class RegisterController {
         //获取当前时间
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date today = new Date();
-
+        password = md5.getMd5(password);
         try{
             NutMap re = new NutMap();
             User user=new User();
@@ -85,13 +86,13 @@ public class RegisterController {
             //记得要-1
             Date temptime=tempuser.get(tempuser.size()-1).getExpiration();
             String tempcheckcode=tempuser.get(tempuser.size()-1).getCheckcode();
-
-            if(tempcheckcode==checkcode){
+            System.out.println(tempcheckcode+" "+checkcode);
+            if(tempcheckcode.equals(checkcode)){
                 if(today.before(temptime)) {
                     user.setPassword(password);
                     user.setUserphone(userphone);
                     user.setUsername("小趣友"+ "#" + userphone);
-                    user.setUserphoto("http://oqjsq4e3e.bkt.clouddn.com/FiiMuZsK5NFfEAssgnDvTBLcNZOZ");
+                    user.setUserphoto("http://oqjsvz8l8.bkt.clouddn.com/diary_head_photo.png");
                     dao.insert(user);
                     re.put("statues", 1);
                     re.put("msg", "OK");
@@ -112,7 +113,7 @@ public class RegisterController {
         }catch (Exception e){
             NutMap re = new NutMap();
             re.put("statues", 0);
-            re.put("msg", "error in register");
+            re.put("msg", "error in register2");
             return re;
         }
 
